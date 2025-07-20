@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Financial Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+
+    <h1 class="mb-4">Upload Financial Report for {{ company.name }}</h1>
+
+    <form method="post" enctype="multipart/form-data" class="border p-4 rounded bg-light">
+        <div class="mb-3">
+            <label for="year" class="form-label">Financial Year:</label>
+            <input type="number" name="year" class="form-control" placeholder="e.g. 2023" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="file" class="form-label">Financial Statement (PDF only):</label>
+            <input type="file" name="file" accept="application/pdf" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Upload & Extract</button>
+        <a href="/company/{{ company.id }}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+</body>
+</html>

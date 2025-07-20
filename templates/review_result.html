@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Review Result</title>
+</head>
+<body>
+  <h1>Review for {{ company.name }} — Year {{ year }}</h1>
+
+  <h2>Reports Included:</h2>
+  <ul>
+    {% for report in reports %}
+      <li>{{ report.year }} — {{ report.file_path }}</li>
+    {% endfor %}
+  </ul>
+
+  <p>Next: Here’s where we’ll build your real financial analysis logic.</p>
+
+  <a href="/">Back to Dashboard</a>
+</body>
+</html>

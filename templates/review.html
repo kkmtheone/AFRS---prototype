@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ company.name }} - {{ report.year }} Review</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="container py-5">
+
+  <!-- Title -->
+  <h1 class="mb-4">{{ company.name }} - {{ report.year }} Review</h1>
+
+  <!-- Compliance Section -->
+  <div class="mb-5">
+    <h3>Compliance Analysis</h3>
+    <ul class="list-group">
+      {% for key, val in type_checks.items() %}
+        <li class="list-group-item">
+          {{ key.replace('_', ' ').title() }}: Required {{ "{:,.0f}".format(val) }}
+        </li>
+      {% endfor %}
+      <li class="list-group-item">
+        Solvency Ratio:
+        {% if solvency_ratio %}
+          {{ solvency_ratio | round(2) }}
+        {% else %}
+          N/A
+        {% endif %}
+      </li>
+      <li class="list-group-item">
+        Submission Requirements Met:
+        {% if report.submission_requirements_met == "Yes" %}
+          ✅ Yes
+        {% else %}
+          ❌ No
+        {% endif %}
+      </li>
+      <li class="list-group-item">
+        Publication Requirements Met:
+        {% if report.publication_requirements_met == "Yes" %}
+          ✅ Yes
+        {% else %}
+          ❌ No
+        {% endif %}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Financial Chart Section -->
+  <div>
+    <h3>Financial Overview</h3>
+    <div class="card p-4">
+      <canvas id="financialChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Optional Download Button (Future: AI-generated PDF) -->
+  <div class="mt-4">
+    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+    <!-- Example: Add download when PDF generation is hooked up -->
+    <!-- <a href="/download_review/{{ company.id }}/{{ report.year }}" class="btn btn-primary">Download PDF</a> -->
+  </div>
+
+  <!-- Chart.js Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('financialChart').getContext('2d');
+
+      const data = {
+        labels: [
+          'Share Capital',
+          'Liquid Capital',
+          'Net Assets',
+          'Liabilities'
+        ],
+        datasets: [{
+          label: '{{ report.year }}',
+          data: [
+            parseFloat('{{ report.share_capital or 0 }}'),
+            parseFloat('{{ report.liquid_capital or 0 }}'),
+            parseFloat('{{ report.net_assets or 0 }}'),
+            parseFloat('{{ report.total_liabilities or 0 }}')
+          ],
+          backgroundColor: [
+            '#007bff',
+            '#28a745',
+            '#ffc107',
+            '#dc3545'
+          ],
+          borderWidth: 1
+        }]
+      };
+
+      const config = {
+        type: 'bar',
+        data: data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              enabled: true
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      };
+
+      new Chart(ctx, config);
+    });
+  </script>
+<div class="mt-4">
+  <a href="/download_review/{{ company.id }}/{{ report.year }}" class="btn btn-outline-success">
+    📄 Download PDF Review
+  </a>
+</div>
+
+</body>
+</html>
