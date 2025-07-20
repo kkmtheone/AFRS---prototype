@@ -6,3 +6,5 @@ pymupdf
 reportlab
 python-multipart
 PyPDF2
+matplotlib
+
