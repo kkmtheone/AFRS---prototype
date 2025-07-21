@@ -15,11 +15,9 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# --- Ensure uploads dir exists ---
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# --- Dependency ---
 def get_db():
     db = SessionLocal()
     try:
@@ -27,7 +25,6 @@ def get_db():
     finally:
         db.close()
 
-# --- Dashboard ---
 @app.get("/")
 def dashboard(request: Request):
     return templates.TemplateResponse(
@@ -35,7 +32,6 @@ def dashboard(request: Request):
         {"request": request}
     )
 
-# --- Add Company ---
 @app.get("/add_company")
 def add_company_form(request: Request):
     return templates.TemplateResponse("add_company.html", {"request": request})
@@ -56,13 +52,11 @@ def add_company(
     db.commit()
     return RedirectResponse("/", status_code=303)
 
-# --- View All Companies ---
 @app.get("/companies")
 def all_companies(request: Request, db: Session = Depends(get_db)):
     companies = db.query(Company).all()
     return templates.TemplateResponse("companies.html", {"request": request, "companies": companies})
 
-# --- Pending Reviews ---
 @app.get("/pending_reviews")
 def pending_reviews(request: Request, db: Session = Depends(get_db)):
     current_year = datetime.now().year
@@ -73,7 +67,6 @@ def pending_reviews(request: Request, db: Session = Depends(get_db)):
     )
     return templates.TemplateResponse("pending_reviews.html", {"request": request, "companies": companies})
 
-# --- Reviewed Companies ---
 @app.get("/reviewed_companies")
 def reviewed_companies(request: Request, db: Session = Depends(get_db)):
     current_year = datetime.now().year
@@ -85,7 +78,6 @@ def reviewed_companies(request: Request, db: Session = Depends(get_db)):
     )
     return templates.TemplateResponse("reviewed_companies.html", {"request": request, "companies": companies})
 
-# --- Company Details ---
 @app.get("/company/{company_id}")
 def company_detail(company_id: int, request: Request, db: Session = Depends(get_db)):
     company = db.query(Company).options(joinedload(Company.financial_reports)).filter(Company.id == company_id).first()
@@ -93,7 +85,6 @@ def company_detail(company_id: int, request: Request, db: Session = Depends(get_
         raise HTTPException(status_code=404, detail="Company not found")
     return templates.TemplateResponse("company_detail.html", {"request": request, "company": company})
 
-# --- Add Financial Report ---
 @app.get("/add_report/{company_id}")
 def add_report_form(company_id: int, request: Request, db: Session = Depends(get_db)):
     company = db.query(Company).filter(Company.id == company_id).first()
@@ -112,7 +103,6 @@ async def add_report(
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
 
-    # Save PDF file
     file_ext = os.path.splitext(file.filename)[1]
     file_path = os.path.join(UPLOAD_DIR, f"{company_id}_{year}{file_ext}")
 
@@ -120,7 +110,6 @@ async def add_report(
     with open(file_path, "wb") as f:
         f.write(file_bytes)
 
-    # Extract key figures
     extracted = extract_numbers_from_pdf(file_bytes)
 
     if not extracted or not extracted.get("share_capital"):
@@ -141,7 +130,6 @@ async def add_report(
 
     return RedirectResponse(f"/company/{company_id}", status_code=303)
 
-# --- Develop Review ---
 @app.get("/review/{company_id}/{year}")
 def develop_review(company_id: int, year: int, request: Request, db: Session = Depends(get_db)):
     company = db.query(Company).filter(Company.id == company_id).first()
@@ -190,7 +178,6 @@ def develop_review(company_id: int, year: int, request: Request, db: Session = D
         },
     )
 
-# --- Download PDF ---
 @app.get("/download_review/{company_id}/{year}")
 def download_review(company_id: int, year: int, db: Session = Depends(get_db)):
     company = db.query(Company).filter(Company.id == company_id).first()

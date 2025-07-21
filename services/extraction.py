@@ -1,6 +1,4 @@
-# services/extraction.py
-
-import fitz  # PyMuPDF
+import fitz  
 import re
 
 def extract_numbers_from_pdf(file_bytes: bytes) -> dict:
@@ -15,7 +13,6 @@ def extract_numbers_from_pdf(file_bytes: bytes) -> dict:
     for page in doc:
         text += page.get_text()
 
-    # Clean text: remove currency symbols, weird spaces, etc.
     text = text.replace(",", "").replace("Ksh", "").replace("KES", "").replace("Shs", "")
 
     def find_value(keywords):

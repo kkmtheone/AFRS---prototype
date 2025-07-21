@@ -1,5 +1,3 @@
-# services/pdf_generator.py
-
 import os
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
