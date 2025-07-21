@@ -6,10 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Bootstrap CSS -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Corbel, Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+  </style>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,7 +20,7 @@
 <body class="container py-5">
 
   <!-- Title -->
-  <h1 class="mb-4">{{ company.name }} - {{ report.year }} Review</h1>
+  <h1 class="mb-4 text-center">{{ company.name }} - {{ report.year }} Review</h1>
 
   <!-- Compliance Section -->
   <div class="mb-5">
@@ -36,38 +39,45 @@
           N/A
         {% endif %}
       </li>
-      <li class="list-group-item">
-        Submission Requirements Met:
-        {% if report.submission_requirements_met == "Yes" %}
-          ✅ Yes
-        {% else %}
-          ❌ No
-        {% endif %}
-      </li>
-      <li class="list-group-item">
-        Publication Requirements Met:
-        {% if report.publication_requirements_met == "Yes" %}
-          ✅ Yes
-        {% else %}
-          ❌ No
-        {% endif %}
-      </li>
     </ul>
   </div>
 
+  <!-- Reviewer Form -->
+  <div class="mb-5">
+    <h3>Final Reviewer Confirmation</h3>
+    <form method="post" action="/complete_review/{{ company.id }}/{{ report.year }}">
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="submission_requirements_met" name="submission_requirements_met" required>
+        <label class="form-check-label" for="submission_requirements_met">
+          Confirm: Submission requirements have been met
+        </label>
+      </div>
+
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="publication_requirements_met" name="publication_requirements_met" required>
+        <label class="form-check-label" for="publication_requirements_met">
+          Confirm: Publication requirements have been met
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-success">✔️ Complete Review</button>
+    </form>
+  </div>
+
   <!-- Financial Chart Section -->
-  <div>
+  <div class="mb-4">
     <h3>Financial Overview</h3>
     <div class="card p-4">
       <canvas id="financialChart"></canvas>
     </div>
   </div>
 
-  <!-- Optional Download Button (Future: AI-generated PDF) -->
+  <!-- Actions -->
   <div class="mt-4">
-    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
-    <!-- Example: Add download when PDF generation is hooked up -->
-    <!-- <a href="/download_review/{{ company.id }}/{{ report.year }}" class="btn btn-primary">Download PDF</a> -->
+    <a href="/" class="btn btn-secondary">⬅️ Back to Dashboard</a>
+    <a href="/download_review/{{ company.id }}/{{ report.year }}" class="btn btn-outline-success">
+      📄 Download PDF Review
+    </a>
   </div>
 
   <!-- Chart.js Script -->
@@ -106,19 +116,13 @@
         options: {
           responsive: true,
           plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              enabled: true
-            }
+            legend: { display: false },
+            tooltip: { enabled: true }
           },
           scales: {
             y: {
               beginAtZero: true,
-              ticks: {
-                precision: 0
-              }
+              ticks: { precision: 0 }
             }
           }
         }
@@ -127,11 +131,5 @@
       new Chart(ctx, config);
     });
   </script>
-<div class="mt-4">
-  <a href="/download_review/{{ company.id }}/{{ report.year }}" class="btn btn-outline-success">
-    📄 Download PDF Review
-  </a>
-</div>
-
 </body>
 </html>

@@ -250,3 +250,24 @@ def delete_report(report_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return RedirectResponse(f"/company/{report.company_id}", status_code=303)
+
+@app.post("/complete_review/{company_id}/{year}")
+def complete_review(
+    company_id: int,
+    year: int,
+    submission_requirements_met: bool = Form(False),
+    publication_requirements_met: bool = Form(False),
+    db: Session = Depends(get_db)
+):
+    report = db.query(FinancialReport).filter(
+        FinancialReport.company_id == company_id,
+        FinancialReport.year == year
+    ).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    report.submission_requirements_met = submission_requirements_met
+    report.publication_requirements_met = publication_requirements_met
+    db.commit()
+
+    return RedirectResponse(f"/company/{company_id}", status_code=303)
