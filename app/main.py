@@ -112,19 +112,26 @@ async def add_report(
 
     extracted = extract_numbers_from_pdf(file_bytes)
 
-    if not extracted or not extracted.get("share_capital"):
-        raise HTTPException(status_code=400, detail="Could not extract financial data. Please check the PDF.")
+    if not extracted:
+        raise HTTPException(status_code=400, detail="Could not extract any financial data. Please check the PDF.")
+
+    net_assets = extracted.get("net_assets", 0) or (
+        extracted.get("total_assets", 0) - extracted.get("total_liabilities", 0)
+        if extracted.get("total_assets", 0) and extracted.get("total_liabilities", 0)
+        else 0
+    )
 
     report = FinancialReport(
         company_id=company_id,
         year=year,
-        share_capital=extracted["share_capital"] or 0,
-        liquid_capital=extracted["liquid_capital"] or 0,
-        net_assets=extracted["net_assets"] or 0,
-        total_liabilities=extracted["total_liabilities"] or 0,
+        share_capital=extracted.get("share_capital") or 0,
+        liquid_capital=extracted.get("liquid_capital") or 0,
+        net_assets=net_assets,
+        total_liabilities=extracted.get("total_liabilities") or 0,
         submission_requirements_met=True,
         publication_requirements_met=True
     )
+
     db.add(report)
     db.commit()
 
