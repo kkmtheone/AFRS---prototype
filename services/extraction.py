@@ -55,16 +55,16 @@ def extract_numbers_from_pdf(file_bytes: bytes) -> dict:
     if net_assets == 0.0 and total_assets and total_liabilities:
         net_assets = total_assets - total_liabilities
 
-    if current_assets = 0.0 and (cash or cash_equivalents or inventories or accounts_receivables or marketable_securities or prepaid_expenses or other_liquid_assets or bank_balances or due_from_related_companies):
+    if current_assets == 0.0 and (cash or cash_equivalents or inventories or accounts_receivables or marketable_securities or prepaid_expenses or other_liquid_assets or bank_balances or due_from_related_companies):
         current_assets = cash + cash_equivalents + inventories + accounts_receivables + marketable_securities + prepaid_expenses + other_liquid_assets + bank_balances + due_from_related_companies
 
-    if liquid_capital = 0.0 and current_assets and inventories:
+    if liquid_capital == 0.0 and current_assets and inventories:
         liquid_capital = current_assets - inventories
     
-    if total_liabilities = 0.0 and non_current_liabilities and current_liabilities:
+    if total_liabilities == 0.0 and non_current_liabilities and current_liabilities:
         total_liabilities = non_current_liabilities + current_liabilities
     
-    if total_assets = 0.0 and non_current_assets and current_assets:
+    if total_assets == 0.0 and non_current_assets and current_assets:
         total_assets = non_current_assets + current_assets
 
     return {
