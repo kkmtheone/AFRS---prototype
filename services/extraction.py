@@ -55,7 +55,7 @@ def extract_numbers_from_pdf(file_bytes: bytes) -> dict:
     if net_assets == 0.0 and total_assets and total_liabilities:
         net_assets = total_assets - total_liabilities
 
-     if current_assets = 0.0:
+     if current_assets = 0.0 and cash:
         current_assets = cash + cash_equivalents + inventories + accounts_receivables + marketable_securities + prepaid_expenses + other_liquid_assets + bank_balances + due_from_related_companies
 
     if liquid_capital = 0.0 and current_assets and inventories:
