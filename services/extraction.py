@@ -35,6 +35,8 @@ def extract_numbers_from_pdf(file_bytes: bytes) -> dict:
     share_capital = find_value(["Share Capital", "Paid Up Capital"])
     liquid_capital = find_value(["Liquid Capital", "Working Capital"])
     net_assets = find_value(["Net Assets", "Total Net Assets"])
+    total_liabilities = find_value(["Total Liabilities", "Liabilities"])
+    total_assets = find_value(["Total Assets", "Assets"])
 
     total_assets = find_value(["Total Assets", "Assets Total"])
     total_liabilities = find_value(["Total Liabilities", "Liabilities Total"])
