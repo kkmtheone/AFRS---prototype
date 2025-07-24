@@ -13,16 +13,16 @@ def extract_numbers_from_pdf(file_bytes: bytes) -> dict:
     for page in doc:
         text += page.get_text()
 
-    text = text.replace(",", "").replace("Ksh", "").replace("KES", "").replace("Shs", "")
+    text = text.replace(",", "").replace("Ksh", "").replace("KES", "").replace("Shs", "").replace("KShs", "").replace("kes", "").replace("Kshs", "").replace("KShs","")
 
     scale = 1
     if re.search(r'in thousands|\'000|in 000', text, re.IGNORECASE):
         scale = 1_000
-    elif re.search(r'KShs \'000|Ksh \'000|ksh \'000|Kshs \'000|KShs 000|KShs `000|Ksh 000|Ksh `000', text, re.IGNORECASE):
+    elif re.search(r'\'000|000|`000', text, re.IGNORECASE):
         scale = 1_000
     elif re.search(r'in millions|million|in 000000|\'000000', text, re.IGNORECASE):
         scale = 1_000_000
-    elif re.search(r'ksh million|kes million|kshs millions|kes millions|Kshs \'000000|\'000000|ksh \'000000|kes \'000000|Kshs `000000|KShs`m|KShs\'m', text, re.IGNORECASE):
+    elif re.search(r'millions|\'000000|`m|\'m', text, re.IGNORECASE):
         scale = 1_000_000
 
     def find_value(keywords):
