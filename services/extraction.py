@@ -17,23 +17,28 @@ def extract_numbers_from_pdf(file_bytes: bytes) -> dict:
 
     scale = 1
     if re.search(r'in thousands|\'000|in 000', text, re.IGNORECASE):
-        scale = 1_000
+        scale = 1000
     elif re.search(r'\'000|000|`000', text, re.IGNORECASE):
-        scale = 1_000
+        scale = 1000
     elif re.search(r'in millions|million|in 000000|\'000000', text, re.IGNORECASE):
-        scale = 1_000_000
+        scale = 1000000
     elif re.search(r'millions|\'000000|`m|\'m', text, re.IGNORECASE):
-        scale = 1_000_000
+        scale = 1000000
 
     def find_value(keywords):
         for keyword in keywords:
             pattern = rf"{keyword}[^0-9\-]*([\d\.]+)"
-            match = re.search(pattern, text, re.IGNORECASE)
-            if match:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            numbers = []
+            for m in matches:
                 try:
-                    return float(match.group(1).strip()) * scale
+                    num = float(m)
+                    if num > 100 and (type(num) == int or type(num) == float):  #skip tiny note refs
+                        numbers.append(num)
                 except ValueError:
                     continue
+            if numbers:
+                return max(numbers) * scale
         return 0.0
 
     share_capital = find_value(["Share Capital", "Share capital", "share capital", "Paid Up Capital", "Paid Up capital", "Paid up capital", "paid up capital"])
