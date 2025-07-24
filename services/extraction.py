@@ -22,7 +22,7 @@ def extract_numbers_from_pdf(file_bytes: bytes) -> dict:
         scale = 1_000
     elif re.search(r'in millions|million|in 000000|\'000000', text, re.IGNORECASE):
         scale = 1_000_000
-    elif re.search(r'in millions|kes million|Kshs \'000000|\'000000|ksh \'000000', text, re.IGNORECASE):
+    elif re.search(r'in millions|kes million|Kshs \'000000|\'000000|ksh \'000000|kes \'000000', text, re.IGNORECASE):
         scale = 1_000_000
 
     def find_value(keywords):
